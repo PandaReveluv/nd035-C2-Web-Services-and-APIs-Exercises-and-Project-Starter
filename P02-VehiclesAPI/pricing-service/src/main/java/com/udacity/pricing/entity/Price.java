@@ -1,22 +1,29 @@
-package com.udacity.pricing.domain.price;
+package com.udacity.pricing.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
  * Represents the price of a given vehicle, including currency.
  */
+@Entity
 public class Price {
 
-    private String currency;
-    private BigDecimal price;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "vehicleid")
     private Long vehicleId;
+    @Column(name = "currency")
+    private String currency;
+    @Column(name = "totalprice")
+    private BigDecimal totalPrice;
 
     public Price() {
     }
 
-    public Price(String currency, BigDecimal price, Long vehicleId) {
+    public Price(String currency, BigDecimal totalPrice, Long vehicleId) {
         this.currency = currency;
-        this.price = price;
+        this.totalPrice = totalPrice;
         this.vehicleId = vehicleId;
     }
 
@@ -28,12 +35,12 @@ public class Price {
         this.currency = currency;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public Long getVehicleId() {
