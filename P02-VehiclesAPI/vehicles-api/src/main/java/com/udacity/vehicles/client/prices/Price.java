@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class Price {
 
     private String currency;
-    private BigDecimal price;
+    private BigDecimal totalPrice;
     private Long vehicleId;
 
     public Price() {
@@ -22,12 +22,12 @@ public class Price {
         this.currency = currency;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public Long getVehicleId() {

@@ -1,9 +1,15 @@
 package com.udacity.vehicles.client.prices;
 
+import com.udacity.vehicles.domain.car.Car;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Implements a class to interface with the Pricing Client for price data.
@@ -35,17 +41,43 @@ public class PriceClient {
             Price price = client
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("services/price/")
-                            .queryParam("vehicleId", vehicleId)
+                            .path("/prices/" + vehicleId)
                             .build()
                     )
                     .retrieve().bodyToMono(Price.class).block();
 
-            return String.format("%s %s", price.getCurrency(), price.getPrice());
+            return String.format("%s %s", price.getCurrency(), price.getTotalPrice());
 
         } catch (Exception e) {
             log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
         }
         return "(consult price)";
+    }
+
+    public Price savePrice(Car car) {
+        Price price = new Price();
+        price.setVehicleId(car.getId());
+        price.setCurrency("USD");
+        price.setTotalPrice(PriceClient.randomPrice());
+        try {
+
+            return client
+                    .post()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/prices")
+                            .build()
+                    )
+                    .body(BodyInserters.fromObject(price))
+                    .retrieve().bodyToMono(Price.class).block();
+
+        } catch (Exception e) {
+            log.error("Unexpected error saving price for vehicle {}", car.getId(), e);
+        }
+        return null;
+    }
+
+    private static BigDecimal randomPrice() {
+        return new BigDecimal(ThreadLocalRandom.current().nextDouble(1, 5))
+                .multiply(new BigDecimal(5000d)).setScale(2, RoundingMode.HALF_UP);
     }
 }
